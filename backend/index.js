@@ -42,6 +42,25 @@ app.post("/signup", (req, res) => {
 })
 app.post("/signin", (req, res) => {
 
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const userExists = USERS.find(u => u.username === username && u.password === password);
+    if (!userExists) {
+        res.status(403).json({
+            message: "Incorrect credentials"
+        })
+    }
+
+    const token = jwt.sign({
+        userId: userExists.id
+    }, "abhay123123key");
+
+
+    res.json({
+        token
+    })
+
 })
 app.post("/organization", (req, res) => {
 

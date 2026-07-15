@@ -79,7 +79,33 @@ app.post("/organization", authMiddleware, (req, res) => {
 })
 
 
-app.post("/add-memeber-to-organization", (req, res) => {
+app.post("/add-member-to-organization", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const organizationId = req.body.organizationId;
+    const memberUserUsername = req.body.memberUserUsername;
+
+    const organization = ORGANIZATIONS.find(org => org.id === organisationId);
+
+    if (!organization || organization.admin !== userId) {
+        res.status(411).json({
+            message: "Either this org doesnot exist or you are not an admin of this org"
+        })
+        return;
+    }
+
+    const memberUser = USERS.find(u => u.username === memberUserUsername);
+
+    if (!memberUser) {
+        res.status(411).json({
+            message: "No user with this username exist in our db"
+        })
+        return
+    }
+    organisation.members.push(memberUser.id);
+
+    res.json({
+        message: " new member added"
+    })
 
 })
 

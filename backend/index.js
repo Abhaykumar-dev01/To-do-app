@@ -62,9 +62,23 @@ app.post("/signin", (req, res) => {
     })
 
 })
-app.post("/organization", (req, res) => {
+app.post("/organization", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    ORGANIZATIONS.push({
+        id: ORGANIZATION_ID++,
+        title: req.body.title,
+        description: req.body.description,
+        admin: userId,
+        members: []
+    })
 
+    res.json({
+        message: "Org created",
+        id: ORGANIZATION_ID - 1
+    })
 })
+
+
 app.post("/add-memeber-to-organization", (req, res) => {
 
 })

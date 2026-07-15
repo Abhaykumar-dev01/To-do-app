@@ -130,6 +130,34 @@ app.put("/issues", (req, res) => {
 
 })
 
+app.delete("/members", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const organizationId = req.body.organizationId;
+    const memberUserUsername = req.body.memberUserUsername;
+
+    const organization = ORGANIZATIONS.find(org => org.id === organizationId);
+
+    if (!organization || organization.admin !== userId) {
+        res.status(411).json({
+            message: "Either this org doesnt exist or you are not an admin of this org"
+        })
+        return
+    }
+
+    const memberUser = USERS.find(u => u.username === memberUserUsername);
+
+    if (!memberUser) {
+        res.status(411).json({
+            message: "No user with this username exists in our db"
+        })
+        return
+    }
+    organization.members = organization.members.filter(user => userId !== memberUser.id);
+    res.json({
+        message: "memeber deleted"
+    })
+})
+
 app.listen(3000, () => {
 
     console.log("listening on port 3000")

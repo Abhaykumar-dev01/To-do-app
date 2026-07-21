@@ -1,16 +1,22 @@
 const jwt = require("jsonwebtoken");
 
-function authmiddleware(req, res, next) {
-    const token = req.header.token;
+const JWT_SECRET = "abhay123123key";
 
-    const decoded = jwt.verify(token, "abhay123123key");
-    const userId = decoded.userId;
-    if (userId) {
-        req.userId = userId;
+function authmiddleware(req, res, next) {
+    const token = req.headers.token;
+
+    if (!token) {
+        return res.status(403).json({
+            message: "No token provided"
+        })
+    }
+    try {
+        const decoded = jwt.verify(token, "abhay123123key");
+        req.userId = decoded.userId;//attaching userId with the subsequent requests
         next();
 
     }
-    else {
+    catch (e) {
         res.status(403).json({
             message: "Token was incorrect"
         })
@@ -19,5 +25,6 @@ function authmiddleware(req, res, next) {
 }
 
 module.exports = {
-    authMiddleware: authMiddleware
+    authMiddleware: authMiddleware,
+    JWT_SECRET
 }

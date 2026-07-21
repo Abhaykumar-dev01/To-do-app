@@ -1,6 +1,11 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
+const path = require("path");
+const { authMiddleware, JWT_SECRET } = require("./middleware");
 const app = express();
 
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "../public")))
 
 let USERS_ID = 1;
 let ORGANIZATION_ID = 1;
@@ -13,11 +18,9 @@ const ORGANIZATIONS = [];
 const BOARDS = [];
 const ISSUES = [];
 
-app.use(express.json());
+//AUTH
 
-app.get("/", (req, res) => {
-    res.send("hii")
-})
+
 app.post("/signup", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -47,14 +50,14 @@ app.post("/signin", (req, res) => {
 
     const userExists = USERS.find(u => u.username === username && u.password === password);
     if (!userExists) {
-        res.status(403).json({
+        return res.status(403).json({
             message: "Incorrect credentials"
         })
     }
 
     const token = jwt.sign({
         userId: userExists.id
-    }, "abhay123123key");
+    }, JWT_SECRET);
 
 
     res.json({
@@ -62,6 +65,9 @@ app.post("/signin", (req, res) => {
     })
 
 })
+
+//Organizations
+
 app.post("/organization", authMiddleware, (req, res) => {
     const userId = req.userId;
     ORGANIZATIONS.push({
@@ -101,7 +107,7 @@ app.post("/add-member-to-organization", authMiddleware, (req, res) => {
         })
         return
     }
-    organisation.members.push(memberUser.id);
+    organization.members.push(memberUser.id);
 
     res.json({
         message: " new member added"
@@ -152,7 +158,7 @@ app.delete("/members", authMiddleware, (req, res) => {
         })
         return
     }
-    organization.members = organization.members.filter(user => userId !== memberUser.id);
+    organization.members = organization.members.filter(id => id !== memberUser.id);
     res.json({
         message: "memeber deleted"
     })

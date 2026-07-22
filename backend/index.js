@@ -18,6 +18,16 @@ const ORGANIZATIONS = [];
 const BOARDS = [];
 const ISSUES = [];
 
+//Returns true if userId is the admin OR a member of this organisation 
+function isPartOfOrg(userId, organization) {
+    if (!organization) {
+        return false;
+    }
+
+    return organization.admin === userId || organization.members.includes(userId);
+}
+
+
 //AUTH
 
 
@@ -115,16 +125,55 @@ app.post("/add-member-to-organization", authMiddleware, (req, res) => {
 
 })
 
-app.post("/board", (req, res) => {
+app.post("/board", authMiddleware, (req, res) => {
 
+    const userId = req.userId;
+    const organizationId = req.body.organizationId;
+    const title = req.body.title;
+
+    const organization = ORGANIZATIONS.find(org => org.id === organizationId);
+
+    if (!isPartOfOrg(userId, organization)) {
+        return res.status(411).json({
+            "message": "Either this org doesnot exist or you are not part of it"
+        })
+    }
+    const board = {
+        id: Board_ID++,
+        title,
+        organizationId,
+        createdBy: userId
+    }
+    BOARDS.push(board);
+
+    res.json({
+        message: "Board created",
+        id: board.id
+    });
+});
+
+
+
+app.get("/boards", (req, res) => {
+    const userId = req.userId;
+    const organizationId = Number(req.query.organizationId);
+
+    if (!isPartOfOrg(userId, organization)) {
+        return res.status(411).json({
+            message: "Either this org doesnort exist or you are not part of it"
+
+        })
+    }
+    const boards = BOARDS.filter(b => b.organizationId === organizationId)
+    res.json({
+        boards
+    })
 })
+
 app.post("/issue", (req, res) => {
 
 })
 
-app.get("/boards", (req, res) => {
-
-})
 app.get("/issues", (req, res) => {
 
 })

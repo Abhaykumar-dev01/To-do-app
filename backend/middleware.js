@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "abhay123123key";
 
-function authmiddleware(req, res, next) {
+function authMiddleware(req, res, next) {
     const token = req.headers.token;
 
     if (!token) {

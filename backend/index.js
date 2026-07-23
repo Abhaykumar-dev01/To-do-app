@@ -27,6 +27,15 @@ function isPartOfOrg(userId, organization) {
     return organization.admin === userId || organization.members.includes(userId);
 }
 
+const VALID_STATUSES = ["upnext", "inprogress", "done"];
+
+function getOrgForBoard(boardId) {
+    const board = BOARDS.find(b => b.id === boardId);
+    if (!board) return null;
+
+    return ORGANIZATIONS.find(org => org.id === board.organizationId) || null;
+}
+
 
 //AUTH
 
@@ -172,11 +181,86 @@ app.get("/boards", (req, res) => {
 
 app.post("/issue", (req, res) => {
 
+    const userId = req.userId;
+    const boardId = req.body.boardId;
+    const title = req.body.title;
+    const description = req.body.description;
+
+    const organization = getOrgForBoard(boardId);
+
+    if (!isPartOfOrg(userId, organization)) {
+        return res.status(411).json({
+            message: "Either this board doesnot exist or you donot have access to it"
+        })
+    }
+
+    const issue = {
+        id: ISSUES_ID++,
+        title,
+        description,
+        boardId,
+        status: "upnext",
+        createdBy: userId
+    }
+    ISSUES.push(issue);
+    res.json({
+        message: "Issue created",
+        id: issue.id
+    })
 })
 
-app.get("/issues", (req, res) => {
+app.get("/issues", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const boardId = Number(req.query.boardId);
+
+    const organization = getOrgForBoard(boardId);
+
+    if (!isPartOfOrg(userId, organization)) {
+        return res.status(411).json({
+            message: "Either this board doesn't exist or you don't have access to it"
+        });
+    }
+
+    const issues = ISSUES.filter(i => i.boardId === boardId);
+
+    res.json({
+        issues
+    });
+});
+
+app.put("/issues", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const issueId = req.body.issueId;
+    const newStatus = req.body.status;
+
+    const issue = ISSUES.find(i => i.id === issueId);
+
+    if (!issue) {
+        return res.status(411).json({
+            message: "Issue not found"
+        })
+    }
+    const organization = getOrgForBoard(issue.boardId);
+
+    if (!isPartOfOrg(userId, organization)) {
+        return res.status(411).json({
+            message: "You donot have access to this issue"
+        })
+    }
+    if (!VALID_STATUSES.includes(newStatus)) {
+        return res.status(400).json({
+            message: "status must be one of : " + VALID_STATUSES.join(", ");
+        })
+    }
+    issue.status = newStatus;
+
+    res.json({
+        message: "Issue updated",
+        issue
+    })
 
 })
+
 app.get("/members", (req, res) => {
 
 })

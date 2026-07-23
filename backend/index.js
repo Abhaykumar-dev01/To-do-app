@@ -249,7 +249,7 @@ app.put("/issues", authMiddleware, (req, res) => {
     }
     if (!VALID_STATUSES.includes(newStatus)) {
         return res.status(400).json({
-            message: "status must be one of : " + VALID_STATUSES.join(", ");
+            message: "status must be one of : " + VALID_STATUSES.join(", ")
         })
     }
     issue.status = newStatus;

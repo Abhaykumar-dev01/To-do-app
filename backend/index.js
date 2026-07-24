@@ -148,7 +148,7 @@ app.post("/board", authMiddleware, (req, res) => {
         })
     }
     const board = {
-        id: Board_ID++,
+        id: BOARD_ID++,
         title,
         organizationId,
         createdBy: userId

@@ -134,6 +134,82 @@ app.post("/add-member-to-organization", authMiddleware, (req, res) => {
 
 })
 
+// List all orgs the logged-in user belongs to (admin or member) — powers the "change org" dropdown
+
+app.get("/organizations", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const myOrgs = ORGANIZATIONS.filter(org => isPartOfOrg(userId, org));
+    const summarized = myOrgs.map(org => ({
+        id: org.id,
+        title: org.title,
+        description: org.description,
+        isAdmin: org.admin === userId
+    }))
+    res.json({
+        organizations: summarized
+    })
+})
+
+// Full details of ONE org — admin only, since it exposes the full member list
+app.get("/organization", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const organizationId = Number(req.query.organizationId);
+
+    const organization = ORGANIZATIONS.find(org => org.id === organizationId);
+
+    if (!organization) {
+        return res.status(411).json({
+            message: "Org doesn't exist"
+        });
+    }
+
+    if (organization.admin !== userId) {
+        return res.status(403).json({
+            message: "Only the admin of this org can view its full details"
+        });
+    }
+
+
+    const memberUsers = organization.members.map(id => {
+        const u = USERS.find(u => u.id === id);
+        return u ? { id: u.id, username: u.username } : null;
+    }).filter(Boolean);
+
+    const adminUser = USERS.find(u => u.id === organization.admin);
+
+    res.json({
+        id: organization.id,
+        title: organization.title,
+        description: organization.description,
+        admin: adminUser ? { id: adminUser.id, username: adminUser.username } : null,
+        members: memberUsers
+    });
+});
+
+// List members of an org — any member (or admin) can view, not just admin
+app.get("/members", authMiddleware, (req, res) => {
+    const userId = req.userId;
+    const organizationId = Number(req.query.organizationId);
+
+    const organization = ORGANIZATIONS.find(org => org.id === organizationId);
+
+    if (!isPartOfOrg(userId, organization)) {
+        return res.status(411).json({
+            message: "Either this org doesn't exist or you are not part of it"
+        });
+    }
+
+    const memberUsers = organization.members.map(id => {
+        const u = USERS.find(u => u.id === id);
+        return u ? { id: u.id, username: u.username } : null;
+    }).filter(Boolean);
+
+    res.json({
+        members: memberUsers
+    });
+});
+
+
 app.post("/board", authMiddleware, (req, res) => {
 
     const userId = req.userId;

@@ -109,7 +109,7 @@ app.post("/add-member-to-organization", authMiddleware, (req, res) => {
     const organizationId = req.body.organizationId;
     const memberUserUsername = req.body.memberUserUsername;
 
-    const organization = ORGANIZATIONS.find(org => org.id === organisationId);
+    const organization = ORGANIZATIONS.find(org => org.id === organizationId);
 
     if (!organization || organization.admin !== userId) {
         res.status(411).json({
@@ -239,9 +239,10 @@ app.post("/board", authMiddleware, (req, res) => {
 
 
 
-app.get("/boards", (req, res) => {
+app.get("/boards", authMiddleware, (req, res) => {
     const userId = req.userId;
     const organizationId = Number(req.query.organizationId);
+    const organization = ORGANIZATIONS.find(org => org.id === organizationId);
 
     if (!isPartOfOrg(userId, organization)) {
         return res.status(411).json({
@@ -255,7 +256,7 @@ app.get("/boards", (req, res) => {
     })
 })
 
-app.post("/issue", (req, res) => {
+app.post("/issue", authMiddleware, (req, res) => {
 
     const userId = req.userId;
     const boardId = req.body.boardId;
@@ -337,13 +338,7 @@ app.put("/issues", authMiddleware, (req, res) => {
 
 })
 
-app.get("/members", (req, res) => {
 
-})
-
-app.put("/issues", (req, res) => {
-
-})
 
 app.delete("/members", authMiddleware, (req, res) => {
     const userId = req.userId;

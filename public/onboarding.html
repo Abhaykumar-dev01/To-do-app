@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create your organization — Board</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="auth-shell">
+        <div class="auth-card">
+            <p class="brand">Board</p>
+            <h1>Create an organization</h1>
+            <p class="subtitle">This is your team's workspace. You can invite people to it next.</p>
+
+            <div id="errorMsg" class="msg msg-error"></div>
+
+            <form id="orgForm">
+                <div class="field">
+                    <label for="title">Organization name</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="field">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="What's this workspace for?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Create organization</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/onboarding.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in — Board</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="auth-shell">
+        <div class="auth-card">
+            <p class="brand">Board</p>
+            <h1>Sign in</h1>
+            <p class="subtitle">Welcome back. Enter your details to continue.</p>
+
+            <div id="errorMsg" class="msg msg-error"></div>
+
+            <form id="signinForm">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Sign in</button>
+            </form>
+
+            <p class="foot-link">Don't have an account? <a href="signup.html">Sign up</a></p>
+        </div>
+    </div>
+
+    <script src="js/signin.js"></script>
+</body>
+
+</html>

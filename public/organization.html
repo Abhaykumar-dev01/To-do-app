@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization — Board</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div class="topbar">
+            <p class="brand" style="margin:0;">Board</p>
+            <div class="topbar-right">
+                <span class="pill" id="orgIdPill"></span>
+                <button class="btn btn-secondary btn-small" id="signOutBtn">Sign out</button>
+            </div>
+        </div>
+
+        <div id="errorMsg" class="msg msg-error"></div>
+
+        <div id="orgHeader">
+            <h1 id="orgTitle">Loading...</h1>
+            <p class="subtitle" id="orgDescription"></p>
+        </div>
+
+        <div class="row" style="margin-bottom: 32px;">
+            <a href="#" id="dashboardLink" class="btn btn-primary" style="width:auto;">Go to dashboard</a>
+        </div>
+
+        <div id="inviteSection" style="display:none; margin-bottom: 32px;">
+            <h2 style="font-size:16px; font-weight:600; margin-bottom:12px;">Invite a member</h2>
+            <div id="inviteError" class="msg msg-error"></div>
+            <form id="inviteForm" class="row" style="align-items:flex-end;">
+                <div class="field" style="flex:1; margin-bottom:0;">
+                    <label for="inviteUsername">Username</label>
+                    <input type="text" id="inviteUsername" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:auto;" id="inviteBtn">Invite</button>
+            </form>
+        </div>
+
+        <div>
+            <h2 style="font-size:16px; font-weight:600; margin-bottom:12px;">Members</h2>
+            <div id="membersList" class="stack"></div>
+        </div>
+    </div>
+
+    <script src="js/organization.js"></script>
+</body>
+
+</html>
